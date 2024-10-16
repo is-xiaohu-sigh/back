@@ -13,6 +13,7 @@ exports.register=(req,res)=>{
 	// 第二步，判断前端传过来的账号有没有已经存在数据表中
 	// 需要mysql的select语句
 	const sql = 'select * from users where account = ?'
+	// 第一个参数是执行语句，第二个是参数，第三个是一个函数，用于处理结果
 	db.query(sql,reginfo.account,err,results=>{
 		if(results.length>0){
 			return res.send({
@@ -22,6 +23,7 @@ exports.register=(req,res)=>{
 		}
 		// 第三步，对密码进行加密
 		// 需要使用加密中间件bcrypt.js
+		// bcrypt.hashSyncd第一个参数是传入的密码，第二个参数是加密后的参数
 		reginfo.password = bcrypt.hashSync(reginfo.password,10)
 		// 第四步，把账号和密码插入users表里面
 		const sql1 = 'insert into users set ?'
