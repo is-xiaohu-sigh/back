@@ -29,12 +29,13 @@ exports.uploadAvatar = (req, res) => {
 exports.bindAccount = (req, res) => {
 	const {
 		account,
-		onlyId,
+		// 這個大小寫打錯了
+		onlyid,
 		url
 	} = req.body
-	console.log(account, onlyId, url)
+	console.log(account, onlyid, url)
 	const sql = 'update image set account =? where onlyId = ?'
-	db.query(sql, [account, onlyId], (err, result) => {
+	db.query(sql, [account, onlyid], (err, result) => {
 		if (err) return res.cc(err)
 		if (result.affectedRows == 1) {
 			const sql1 = 'update users set image_url =? where account =?'
@@ -74,11 +75,12 @@ exports.changePassword = (req,res)=>{
 }
 
 //获取用户信息,接收参数id
-exports.getUserInfo = (req, res) => {
+exports.getUserInfor = (req, res) => {
 	const sql = 'select * from users where id =?'
 	db.query(sql, req.body.id, (err, result) => {
 			if(err) return res.cc(err)
-			res.send(result)
+			result[0].password=''
+			res.send(result[0])
 	})
 }
 //修改名称 接收参数 id name
@@ -115,5 +117,39 @@ exports.changeEmail = (req, res) => {
 				status:0,
 				message:'修改成功'
 			})
+	})
+}
+//忘记密码 验证账户和邮箱是否一致 email account
+exports.verifyAccountAndEmail =(req,res)=>{
+	const {account,email} = req.body
+	const sql = 'select * from users where account = ?'
+	db.query(sql,account,(err,result)=>{
+		if(err) return res.cc(err)
+		// res.send(result[0])
+		if(email ==result[0].email){
+			res.send({
+				status:0,
+				message:'查询成功',
+				id:result[0].id
+			})
+		}else{
+			res.send({
+				status:1,
+				message:'查询失败'
+			})
+		}
+	})
+}
+//忘记密码 修改密码 参数 newPassword id
+exports.changePasswordInLogin =(req,res)=>{
+	const user = req.body
+	user.newPassword = bcrypt.hashSync(user.newPassword, 10)
+	const sql='update users set password =? where id =?'
+	db.query(sql,[user.newPassword,user.id],(err,result)=>{
+		if(err) return res.cc(err)
+		res.send({
+			status:0,
+			message:'更新成功'
+		})
 	})
 }

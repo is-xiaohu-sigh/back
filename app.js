@@ -50,7 +50,7 @@ const {expressjwt:jwt} = require('express-jwt')
 const loginRouter=require('./router/login')
 const Joi =require('joi')
 app.use('/api',loginRouter)
-const userRouter = require('./router/userinfo.js')
+const userRouter = require('./router/userinfor.js')
 app.use('/user',userRouter)
 // 对不符合joi规则的情况进行报错
 app.use((err,req,res,next)=>{

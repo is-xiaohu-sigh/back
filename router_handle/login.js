@@ -94,6 +94,7 @@ exports.login = (req, res) => {
 		const tokenStr = jwt.sign(user, jwtconfig.jwtSecretKey, {
 			expiresIn: '7h'
 		})
+		results[0].password=''
 		res.send({
 			results: results[0],
 			status: 0,
